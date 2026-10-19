@@ -20,7 +20,7 @@ function adicionarProduto(nome, preco, estoque) {
     return;
   }
 
-  const novoId = produtos.length + 1;
+  const novoId = Math.max(0, ...produtos.map((produto) => produto.id)) + 1;
 
   const novoProduto = {
     id: novoId,
@@ -41,11 +41,9 @@ function removerProduto(id) {
     return;
   }
 
-  const produtoRemovido = produtos
-    .splice(produto, 1)
-    .map((produto) => produto.nome);
+  const produtoRemovido = produtos.splice(produto, 1)[0];
 
-  console.log(`Produto ${produtoRemovido} removido com sucesso.\n`);
+  console.log(`Produto ${produtoRemovido.nome} removido com sucesso.\n`);
 }
 
 function listarProdutos() {
