@@ -6,19 +6,16 @@ const {
 
 const { calcularValorEstoque, listarEstoqueBaixo } = require("./estoque");
 
-listarProdutos();
-adicionarProduto("Mochila", 200, 4);
+adicionarProduto("Teclado", 120, 4);
+removerProduto(1);
 
 listarProdutos();
 listarEstoqueBaixo();
 
 console.log(
-  "\nValor total do estoque:",
+  "\nValor total:",
   calcularValorEstoque().toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
   }),
 );
-
-removerProduto(2);
-listarProdutos();

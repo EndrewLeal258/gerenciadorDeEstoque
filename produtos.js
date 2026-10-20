@@ -46,14 +46,19 @@ function listarProdutos() {
 }
 
 function removerProduto(id) {
-  const produto = produtos.findIndex((produto) => produto.id === id);
+  if (!Number.isInteger(id) || id <= 0) {
+    console.log("ID inválido. Informe um número inteiro positívo.\n");
+    return;
+  }
 
-  if (produto === -1) {
+  const indice = produtos.findIndex((produto) => produto.id === id);
+
+  if (indice === -1) {
     console.log("Produto não encontrado.\n");
     return;
   }
 
-  const produtoRemovido = produtos.splice(produto, 1)[0];
+  const produtoRemovido = produtos.splice(indice, 1)[0];
 
   console.log(`\nProduto ${produtoRemovido.nome} removido com sucesso.\n`);
 }
