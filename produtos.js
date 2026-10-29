@@ -6,18 +6,24 @@ const produtos = [
 
 function adicionarProduto(nome, preco, estoque) {
   if (typeof nome !== "string" || nome.trim() === "") {
-    console.log("Nome inválido.\n");
-    return;
+    return {
+      sucesso: false,
+      mensagem: "Nome inválido.",
+    };
   }
 
   if (!Number.isFinite(preco) || preco <= 0) {
-    console.log("Preço inválido.\n");
-    return;
+    return {
+      sucesso: false,
+      mensagem: "Preço inválido.",
+    };
   }
 
   if (Number.isInteger(estoque) === false || estoque < 0) {
-    console.log("Estoque inválido.\n");
-    return;
+    return {
+      sucesso: false,
+      mensagem: "Estoque Inválido.",
+    };
   }
 
   const novoId = Math.max(0, ...produtos.map((produto) => produto.id)) + 1;
@@ -30,7 +36,12 @@ function adicionarProduto(nome, preco, estoque) {
   };
 
   produtos.push(novoProduto);
-  console.log(`\nProduto ${novoProduto.nome} cadastrado com sucesso!\n`);
+
+  return {
+    sucesso: true,
+    mensagem: "Produto cadastrado com sucesso.",
+    produto: novoProduto,
+  };
 }
 
 function listarProdutos() {
@@ -47,20 +58,28 @@ function listarProdutos() {
 
 function removerProduto(id) {
   if (!Number.isInteger(id) || id <= 0) {
-    console.log("ID inválido. Informe um número inteiro positívo.\n");
-    return;
+    return {
+      sucesso: false,
+      mensagem: "ID inválido.",
+    };
   }
 
   const indice = produtos.findIndex((produto) => produto.id === id);
 
   if (indice === -1) {
-    console.log("Produto não encontrado.\n");
-    return;
+    return {
+      sucesso: false,
+      mensagem: "Produto não encontrado.",
+    };
   }
 
   const produtoRemovido = produtos.splice(indice, 1)[0];
 
-  console.log(`\nProduto ${produtoRemovido.nome} removido com sucesso.\n`);
+  return {
+    sucesso: true,
+    mensagem: "Produto removido com sucesso.",
+    produto: produtoRemovido,
+  };
 }
 
 module.exports = {

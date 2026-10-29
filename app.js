@@ -6,7 +6,15 @@ const {
 
 const { calcularValorEstoque, listarEstoqueBaixo } = require("./estoque");
 
-adicionarProduto("Teclado", 120, 4);
+const resultado = adicionarProduto("Teclado", 120, 4);
+
+if (resultado.sucesso) {
+  console.log(resultado.mensagem);
+  console.log("Produto cadastrado:", resultado.produto);
+} else {
+  console.log("Erro:", resultado.mensagem);
+}
+
 removerProduto(1);
 
 listarProdutos();

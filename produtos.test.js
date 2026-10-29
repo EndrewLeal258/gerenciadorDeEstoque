@@ -25,17 +25,19 @@ test("calcular o valor total do estoque inicial", () => {
 test("não remover produtos quando o ID não existe", () => {
   const quantidadeAntes = produtos.length;
 
-  removerProduto(999);
+  const resultado = removerProduto(999);
 
+  assert.equal(resultado.sucesso, false);
+  assert.equal(resultado.mensagem, "Produto não encontrado.");
   assert.equal(produtos.length, quantidadeAntes);
 });
 
 test("remover um produto existente", () => {
-  const quantidadeAntes = produtos.length;
+  const resultado = removerProduto(1);
 
-  removerProduto(1);
-
-  assert.equal(produtos.length, quantidadeAntes - 1);
+  assert.equal(resultado.sucesso, true);
+  assert.equal(resultado.produto.id, 1);
+  assert.equal(resultado.produto.nome, "Camisa");
 
   const produtoRemovido = produtos.find((produto) => produto.id === 1);
 
@@ -43,24 +45,21 @@ test("remover um produto existente", () => {
 });
 
 test("adicionar um produto válido", () => {
-  const quantidadeAntes = produtos.length;
+  const resultado = adicionarProduto("Teclado de teste", 120, 4);
 
-  adicionarProduto("Teclado de teste", 120, 4);
-
-  assert.equal(produtos.length, quantidadeAntes + 1);
-
-  const produto = produtos.find((item) => item.nome === "Teclado de teste");
-
-  assert.ok(produto);
-  assert.equal(produto.preco, 120);
-  assert.equal(produto.estoque, 4);
+  assert.equal(resultado.sucesso, true);
+  assert.equal(resultado.produto.nome, "Teclado de teste");
+  assert.equal(resultado.produto.preco, 120);
+  assert.equal(resultado.produto.estoque, 4);
 });
 
 test("não adicionar produto com nome vazio", () => {
   const quantidadeAntes = produtos.length;
 
-  adicionarProduto("   ", 120, 4);
+  const resultado = adicionarProduto("   ", 120, 4);
 
+  assert.equal(resultado.sucesso, false);
+  assert.equal(resultado.mensagem, "Nome inválido.");
   assert.equal(produtos.length, quantidadeAntes);
 });
 
