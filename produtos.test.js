@@ -30,6 +30,18 @@ test("não remover produtos quando o ID não existe", () => {
   assert.equal(produtos.length, quantidadeAntes);
 });
 
+test("remover um produto existente", () => {
+  const quantidadeAntes = produtos.length;
+
+  removerProduto(1);
+
+  assert.equal(produtos.length, quantidadeAntes - 1);
+
+  const produtoRemovido = produtos.find((produto) => produto.id === 1);
+
+  assert.equal(produtoRemovido, undefined);
+});
+
 test("adicionar um produto válido", () => {
   const quantidadeAntes = produtos.length;
 
@@ -48,6 +60,22 @@ test("não adicionar produto com nome vazio", () => {
   const quantidadeAntes = produtos.length;
 
   adicionarProduto("   ", 120, 4);
+
+  assert.equal(produtos.length, quantidadeAntes);
+});
+
+test("não adicionar produto com preço inválido", () => {
+  const quantidadeAntes = produtos.length;
+
+  adicionarProduto("Mouse", -50, 3);
+
+  assert.equal(produtos.length, quantidadeAntes);
+});
+
+test("não adicionar produto com estoque inválido", () => {
+  const quantidadeAntes = produtos.length;
+
+  adicionarProduto("Monitor", 800, -2);
 
   assert.equal(produtos.length, quantidadeAntes);
 });
