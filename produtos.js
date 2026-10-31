@@ -82,9 +82,59 @@ function removerProduto(id) {
   };
 }
 
+function atualizarProduto(id, nome, preco, estoque) {
+  if (!Number.isInteger(id) || id <= 0) {
+    return {
+      sucesso: false,
+      mensagem: "ID inválido.",
+    };
+  }
+
+  const produto = produtos.find((produto) => produto.id === id);
+
+  if (!produto) {
+    return {
+      sucesso: false,
+      mensagem: "Produto não encontrado.",
+    };
+  }
+
+  if (typeof nome !== "string" || nome.trim() === "") {
+    return {
+      sucesso: false,
+      mensagem: "Nome inválido.",
+    };
+  }
+
+  if (!Number.isFinite(preco) || preco <= 0) {
+    return {
+      sucesso: false,
+      mensagem: "Preço inválido.",
+    };
+  }
+
+  if (Number.isInteger(estoque) === false || estoque < 0) {
+    return {
+      sucesso: false,
+      mensagem: "Estoque Inválido.",
+    };
+  }
+
+  produto.nome = nome.trim();
+  produto.preco = preco;
+  produto.estoque = estoque;
+
+  return {
+    sucesso: true,
+    mensagem: "Produto atualizado com sucesso.",
+    produto,
+  };
+}
+
 module.exports = {
   produtos,
   adicionarProduto,
   listarProdutos,
   removerProduto,
+  atualizarProduto,
 };
