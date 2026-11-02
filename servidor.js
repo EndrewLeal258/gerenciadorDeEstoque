@@ -1,10 +1,10 @@
 const express = require("express");
+const { produtos, adicionarProduto, removerProduto } = require("./produtos");
 const {
-  produtos,
-  adicionarProduto,
-  removerProduto,
+  criarProduto,
+  listarProdutos,
   atualizarProduto,
-} = require("./produtos");
+} = require("./produtosRepository");
 
 const app = express();
 const PORTA = 3000;
@@ -15,20 +15,39 @@ app.get("/", (req, res) => {
   res.send("API do Gerenciador de Estoque funcionando!");
 });
 
-app.get("/produtos", (req, res) => {
-  res.json(produtos);
+app.get("/produtos", async (req, res) => {
+  try {
+    const produtos = await listarProdutos();
+
+    res.json(produtos);
+  } catch (erro) {
+    console.log("Erro ao lista produtos:", erro.message);
+
+    res.status(500).json({
+      sucesso: false,
+      mensagem: "Erro ao buscar produtos.",
+    });
+  }
 });
 
-app.post("/produtos", (req, res) => {
-  const { nome, preco, estoque } = req.body ?? {};
+app.post("/produtos", async (req, res) => {
+  try {
+    const { nome, preco, estoque } = req.body ?? {};
 
-  const resultado = adicionarProduto(nome, preco, estoque);
+    const resultado = await criarProduto(nome, preco, estoque);
 
-  if (!resultado.sucesso) {
-    return res.status(400).json(resultado);
+    if (!resultado.sucesso) {
+      return res.status(400).json(resultado);
+    }
+
+    res.status(201).json(resultado);
+  } catch (erro) {
+    console.log("Erro no cadastro do produto:", erro.message);
+    res.status(500).json({
+      sucesso: false,
+      mensagem: "Erro interno do servidor",
+    });
   }
-
-  res.status(201).json(resultado);
 });
 
 app.delete("/produtos/:id", (req, res) => {
@@ -44,19 +63,29 @@ app.delete("/produtos/:id", (req, res) => {
   res.json(resultado);
 });
 
-app.put("/produtos/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const { nome, preco, estoque } = req.body ?? {};
+app.put("/produtos/:id", async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const { nome, preco, estoque } = req.body ?? {};
 
-  const resultado = atualizarProduto(id, nome, preco, estoque);
+    const resultado = await atualizarProduto(id, nome, preco, estoque);
 
-  if (!resultado.sucesso) {
-    const status = resultado.mensagem === "Produto não encontrado." ? 400 : 404;
+    if (!resultado.sucesso) {
+      const status =
+        resultado.mensagem === "Produto não encontrado." ? 400 : 404;
 
-    return res.status(status).json(resultado);
+      return res.status(status).json(resultado);
+    }
+
+    res.json(resultado);
+  } catch (erro) {
+    console.log("Erro ao atualizar produto:", erro.message);
+
+    res.status(500).json({
+      sucesso: false,
+      mensagem: "Erro ao atualzar o produto.",
+    });
   }
-
-  res.json(resultado);
 });
 
 app.listen(PORTA, () => {
