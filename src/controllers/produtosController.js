@@ -5,19 +5,16 @@ const {
   removerProduto,
 } = require("../repositories/produtosRepository");
 
-async function listar(req, res) {
+async function listar(req, res, next) {
   try {
     const produtos = await listarProdutos();
-    res.json(produtos);
+    res.status(200).json(produtos);
   } catch (erro) {
-    console.error(erro.message);
-    res.status(500).json({
-      mensagem: "Erro ao buscar produto.",
-    });
+    next(erro);
   }
 }
 
-async function criar(req, res) {
+async function criar(req, res, next) {
   try {
     const { nome, preco, estoque } = req.body ?? {};
 
@@ -29,14 +26,11 @@ async function criar(req, res) {
 
     res.status(201).json(resultado);
   } catch (erro) {
-    console.error(erro.message);
-    res.status(500).json({
-      mensagem: "Erro ao cadastrar produto.",
-    });
+    next(erro);
   }
 }
 
-async function atualizar(req, res) {
+async function atualizar(req, res, next) {
   try {
     const id = Number(req.params.id);
     const { nome, preco, estoque } = req.body ?? {};
@@ -45,40 +39,33 @@ async function atualizar(req, res) {
 
     if (!resultado.sucesso) {
       const status =
-        resultado.mensagem === "Produto não encontrado." ? 400 : 404;
+        resultado.mensagem === "Produto não encontrado." ? 404 : 400;
 
       return res.status(status).json(resultado);
     }
 
-    res.json(resultado);
+    res.status(200).json(resultado);
   } catch (erro) {
-    console.error(erro.message);
-    res.status(500).json({
-      mensagem: "Erro ao atulizar produto.",
-    });
+    next(erro);
   }
 }
 
-async function remover(req, res) {
+async function remover(req, res, next) {
   try {
     const id = Number(req.params.id);
 
     const resultado = await removerProduto(id);
 
     if (!resultado.sucesso) {
-      const status = (resultado.mensagem = "Produto não encontrado."
-        ? 400
-        : 404);
+      const status =
+        resultado.mensagem === "Produto não encontrado." ? 404 : 400;
 
       return res.status(status).json(resultado);
     }
 
     res.json(resultado);
   } catch (erro) {
-    console.error(erro.message);
-    res.status(500).json({
-      mensagem: "Erro ao remover produto.",
-    });
+    next(erro);
   }
 }
 
