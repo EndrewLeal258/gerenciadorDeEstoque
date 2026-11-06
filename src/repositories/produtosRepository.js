@@ -1,4 +1,4 @@
-const pool = require("./db");
+const pool = require("../config/db");
 
 async function criarProduto(nome, preco, estoque) {
   if (typeof nome !== "string" || nome.trim() === "") {
@@ -84,4 +84,38 @@ async function atualizarProduto(id, nome, preco, estoque) {
   };
 }
 
-module.exports = { criarProduto, listarProdutos, atualizarProduto };
+async function removerProduto(id) {
+  if (!Number.isInteger(id) || id <= 0) {
+    return {
+      sucesso: false,
+      mensagem: "ID inválido.",
+    };
+  }
+
+  const resultado = await pool.query(
+    `DELETE FROM produtos
+    WHERE id = $1
+    RETURNING *`,
+    [id],
+  );
+
+  if (resultado.rows.length === 0) {
+    return {
+      sucesso: false,
+      mensagem: "Produto não encontrado.",
+    };
+  }
+
+  return {
+    sucesso: true,
+    mensagem: "Produto removido com sucesso.",
+    produto: resultado.rows[0],
+  };
+}
+
+module.exports = {
+  criarProduto,
+  listarProdutos,
+  atualizarProduto,
+  removerProduto,
+};
